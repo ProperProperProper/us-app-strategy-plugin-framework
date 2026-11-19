@@ -31,6 +31,10 @@ needed only for real Moomoo/OpenD fetching and paper execution.
 See [real integration](docs/REAL_INTEGRATION.md) for the actual-data replay
 command and the SIMULATE-only order boundary.
 
+See [plugin benefits](docs/PLUGIN_BENEFITS.md) for why the strategy is
+isolated behind a plugin contract and how that improves hot-swapping, safety,
+research comparisons, maintenance, and extensibility.
+
 The repository includes the first real adapter for the US.APP paper-strategy
 lab. It loads real Moomoo candles into SQLite, runs the lab's deterministic
 blind replay, and can write a validated `SIMULATE`-only runtime artifact after

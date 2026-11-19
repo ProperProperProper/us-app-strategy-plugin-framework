@@ -2,6 +2,13 @@
 
 The framework has two layers.
 
+The plugin boundary keeps the strategy replaceable while the host remains
+stable. This enables hot-swapping at completed-candle boundaries, safe
+rollback, consistent walk-forward comparisons, provider independence, and
+future indicators or data adapters without duplicating broker and risk logic.
+See [plugin benefits](PLUGIN_BENEFITS.md) for the full operational and research
+case.
+
 The trusted host owns candle validation, chronological replay, position limits,
 promotion, persistence, hot-swap authorization, and paper-only safety. Plugins
 are untrusted research extensions until explicitly installed and tested.

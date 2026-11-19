@@ -51,7 +51,7 @@ class PluginResearchHost:
         payload = {
             "plugin": {
                 **evidence["plugin"],
-                "python_root": str(Path(self.plugin.module.__file__).resolve().parents[2]),
+                "python_root": str(Path(__file__).resolve().parents[1]),
                 "entrypoint": "strategy_plugins.us_app_plugin:USAppStrategyPlugin",
                 "constructor": {"lab_root": str(self.plugin.lab_root)},
             },

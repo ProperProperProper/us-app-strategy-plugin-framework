@@ -8,9 +8,11 @@ from typing import Any
 
 import pandas as pd
 
+from .us_app_plugin import USAppStrategyPlugin
+
 
 class USAppEvaluator:
-    def __init__(self, lab_root: str | Path):
+    def __init__(self, lab_root: str | Path, plugin: USAppStrategyPlugin | None = None):
         root = Path(lab_root).resolve()
         source = root / "scripts" / "strategy_57pct.py"
         if not source.exists():
@@ -22,12 +24,13 @@ class USAppEvaluator:
         sys.modules[spec.name] = module
         spec.loader.exec_module(module)
         self.module = module
+        self.plugin = plugin or USAppStrategyPlugin(root)
 
     def replay(self, candles: pd.DataFrame, candidates: list[dict[str, Any]] | None = None) -> dict[str, Any]:
         """Run the real first-21-session/continuous-unseen replay."""
-        candidates = candidates or [dict(self.module.BASELINE)]
+        candidates = candidates or [self.plugin.baseline]
         return self.module.blind_session_walk_forward(candles, candidates, min_train_sessions=21)
 
     @property
     def baseline(self) -> dict[str, Any]:
-        return dict(self.module.BASELINE)
+        return self.plugin.baseline

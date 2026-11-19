@@ -6,5 +6,6 @@ from .sqlite_candles import CandleStore
 from .moomoo_source import MoomooOpenDSource
 from .us_app_evaluator import USAppEvaluator
 from .moomoo_simulate import MoomooSimulateExecutor
+from .us_app_plugin import USAppStrategyPlugin
 
-__all__ = ["ExecutionModelPlugin", "IndicatorPlugin", "PluginManifest", "ProposalProviderPlugin", "StrategyPlugin", "PluginRegistry", "CandleStore", "MoomooOpenDSource", "USAppEvaluator", "MoomooSimulateExecutor"]
+__all__ = ["ExecutionModelPlugin", "IndicatorPlugin", "PluginManifest", "ProposalProviderPlugin", "StrategyPlugin", "PluginRegistry", "CandleStore", "MoomooOpenDSource", "USAppEvaluator", "MoomooSimulateExecutor", "USAppStrategyPlugin"]

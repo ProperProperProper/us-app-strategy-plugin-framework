@@ -6,7 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
-from strategy_plugins import CandleStore, MoomooOpenDSource, USAppEvaluator
+from strategy_plugins import CandleStore, MoomooOpenDSource, PluginRegistry, USAppEvaluator, USAppStrategyPlugin
 
 
 def main() -> int:
@@ -26,7 +26,10 @@ def main() -> int:
     frame = store.load(args.symbol, 10)
     if frame.empty:
         raise RuntimeError("no real candles available; use --fetch with Moomoo OpenD running")
-    result = USAppEvaluator(args.lab_root).replay(frame)
+    plugin = USAppStrategyPlugin(args.lab_root)
+    registry = PluginRegistry()
+    registry.register(plugin)
+    result = USAppEvaluator(args.lab_root, plugin).replay(frame)
     print(json.dumps({"symbol": args.symbol, "rows": len(frame), "replay": result}, default=str, indent=2))
     return 0
 

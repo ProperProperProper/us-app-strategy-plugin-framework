@@ -22,7 +22,8 @@ python3 scripts/real_us_app_replay.py \
 ```
 
 The command fetches real 10-minute candles, validates and stores them in
-SQLite, then calls the existing evaluator. It uses the first 21 complete
+SQLite, registers the real US.APP strategy plugin, then calls the existing
+evaluator through that plugin boundary. It uses the first 21 complete
 sessions for selection and one continuous unseen replay through the latest
 candle. It never creates synthetic candles.
 

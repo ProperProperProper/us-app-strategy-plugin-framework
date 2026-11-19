@@ -6,6 +6,11 @@ The trusted host owns candle validation, chronological replay, position limits,
 promotion, persistence, hot-swap authorization, and paper-only safety. Plugins
 are untrusted research extensions until explicitly installed and tested.
 
+Python is the native orchestration layer on Apple Silicon. Moomoo access,
+SQLite, plugin loading, provider coordination, and supervision stay in ARM64
+Python. Rust is an optional native backend for measured CPU-heavy kernels and
+must pass parity tests against the Python reference implementation.
+
 ## Plugin categories
 
 - **Strategy:** entry and exit rules plus bounded configuration.
@@ -14,8 +19,9 @@ are untrusted research extensions until explicitly installed and tested.
 - **Data source:** reproducible candle snapshots or broker feeds.
 - **Execution model:** fees, slippage, and fill assumptions for research.
 
-Provider and data plugins should eventually run in isolated subprocesses. A
-plugin must never receive broker credentials or direct order permissions.
+Provider and data plugins run behind explicit adapters and should execute in
+isolated subprocesses. A plugin must never receive broker credentials or direct
+order permissions.
 
 ## Promotion boundary
 
@@ -29,3 +35,11 @@ A plugin cannot report its own returns or promote itself.
 Every plugin declares a name, version, kind, API version, supported intervals,
 and capabilities. The host records the manifest beside every evaluation so
 results remain attributable after a plugin changes.
+
+## Real-data boundary
+
+The framework must not use synthetic candles or a demonstration strategy for
+research claims. The US.APP integration reads real Moomoo OpenD candles,
+validates and persists them in SQLite, evaluates them with the originating
+lab's 21-session continuous blind replay, and permits only Moomoo
+`TrdEnv.SIMULATE` paper execution. Live trading is outside the project scope.

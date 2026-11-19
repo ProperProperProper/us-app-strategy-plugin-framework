@@ -19,5 +19,16 @@ python -m pip install -e '.[test]'
 pytest -q
 ```
 
-This repository is research-only. It contains no broker credentials, account
-identifiers, live-order adapter, or production trading code.
+This repository contains no fake market-data fixtures and no toy strategy.
+Production integration uses real Moomoo OpenD candles, the deterministic
+evaluator, SQLite persistence, and Moomoo `TrdEnv.SIMULATE` paper execution.
+Credentials and account identifiers remain local and are never committed.
+
+The plugin contracts are not themselves a trading bot. The first real adapter
+must connect the contracts to the existing US.APP paper-strategy lab and its
+shared database before any plugin can be evaluated or paper-promoted.
+
+Python is the native integration language: run an ARM64 Python build with
+native NumPy/Pandas wheels for Moomoo, SQLite, plugins, agents, and supervision.
+Use Rust selectively for deterministic CPU-heavy kernels after parity testing;
+do not replace working Python orchestration merely for language purity.

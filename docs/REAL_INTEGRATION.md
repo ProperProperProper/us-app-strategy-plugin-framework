@@ -30,3 +30,24 @@ candle. It never creates synthetic candles.
 `MoomooSimulateExecutor` is the separate paper-order boundary. It confirms the
 selected account is `SIMULATE` before placing any order. It has no live-order
 mode and receives no credentials from the repository.
+
+## Paper-bot handoff
+
+To test a bounded candidate and hand it to the existing paper bot, point the
+promotion artifact at that bot's local runtime JSON:
+
+```sh
+python3 scripts/real_us_app_replay.py \
+  --lab-root /absolute/path/to/us-app-paper-strategy-lab \
+  --db quant_dashboard.sqlite3 \
+  --symbol US.APP \
+  --start '2026-01-01 09:30:00' \
+  --end '2026-11-18 16:00:00' \
+  --candidate-json candidate.json \
+  --promote-artifact /absolute/path/to/us-app-paper-strategy-lab/paper_bot_live_strategy.json
+```
+
+The artifact is changed only when the candidate beats a freshly rerun baseline
+under the continuous replay gate. The existing bot observes the artifact and
+hot-reloads approved parameters at a completed-candle boundary. A rejected
+candidate leaves the last known-good artifact unchanged.

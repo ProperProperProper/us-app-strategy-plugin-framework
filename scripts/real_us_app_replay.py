@@ -6,7 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
-from strategy_plugins import CandleStore, MoomooOpenDSource, PluginRegistry, USAppEvaluator, USAppStrategyPlugin
+from strategy_plugins import CandleStore, MoomooOpenDSource, PluginRegistry, PluginResearchHost, USAppStrategyPlugin
 
 
 def main() -> int:
@@ -17,6 +17,8 @@ def main() -> int:
     parser.add_argument("--start", required=True, help="inclusive timestamp")
     parser.add_argument("--end", required=True, help="inclusive timestamp")
     parser.add_argument("--fetch", action="store_true", help="fetch real candles from local Moomoo OpenD")
+    parser.add_argument("--candidate-json", type=Path, help="JSON object containing a bounded candidate parameter mutation")
+    parser.add_argument("--promote-artifact", type=Path, help="existing paper-bot runtime artifact to update only after the gate passes")
     args = parser.parse_args()
 
     store = CandleStore(args.db)
@@ -29,8 +31,15 @@ def main() -> int:
     plugin = USAppStrategyPlugin(args.lab_root)
     registry = PluginRegistry()
     registry.register(plugin)
-    result = USAppEvaluator(args.lab_root, plugin).replay(frame)
-    print(json.dumps({"symbol": args.symbol, "rows": len(frame), "replay": result}, default=str, indent=2))
+    candidate = json.loads(args.candidate_json.read_text()) if args.candidate_json else None
+    host = PluginResearchHost(plugin, args.promote_artifact or Path("plugin_runtime.json"))
+    evidence = host.evaluate(frame, candidate)
+    promoted = None
+    if args.promote_artifact:
+        if not evidence["promotable"]:
+            raise RuntimeError(f"candidate rejected; artifact was not changed: {evidence['reasons']}")
+        promoted = host.promote(evidence)
+    print(json.dumps({"symbol": args.symbol, "rows": len(frame), "evidence": evidence, "promoted": promoted}, default=str, indent=2))
     return 0
 
 

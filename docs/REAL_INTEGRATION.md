@@ -49,5 +49,7 @@ python3 scripts/real_us_app_replay.py \
 
 The artifact is changed only when the candidate beats a freshly rerun baseline
 under the continuous replay gate. The existing bot observes the artifact and
-hot-reloads approved parameters at a completed-candle boundary. A rejected
-candidate leaves the last known-good artifact unchanged.
+hot-reloads the approved plugin entrypoint, constructor, parameters, and
+interval at a completed-candle boundary. If loading or contract validation
+fails, it retains the last known-good strategy. A rejected candidate leaves
+the artifact unchanged.

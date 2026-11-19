@@ -17,7 +17,8 @@ class USAppStrategyPlugin:
     )
 
     def __init__(self, lab_root: str | Path):
-        source = Path(lab_root).resolve() / "scripts" / "strategy_57pct.py"
+        self.lab_root = Path(lab_root).resolve()
+        source = self.lab_root / "scripts" / "strategy_57pct.py"
         if not source.exists():
             raise FileNotFoundError(f"US.APP strategy source not found: {source}")
         spec = importlib.util.spec_from_file_location("us_app_strategy_plugin", source)
@@ -40,6 +41,17 @@ class USAppStrategyPlugin:
     def features(self, candles, config: Mapping[str, Any]):
         self.validate_config(config)
         return self.module.add_features(candles, {**self.baseline, **dict(config)})
+
+    def aggregate_candles(self, candles, interval: int):
+        return self.module.aggregate_candles(candles, int(interval))
+
+    def strategy_signal(self, candles, config: Mapping[str, Any]):
+        self.validate_config(config)
+        return self.module.strategy_signal(candles, {**self.baseline, **dict(config)})
+
+    def profit_capture_exit(self, price, entry, peak, atr, config: Mapping[str, Any]):
+        self.validate_config(config)
+        return self.module.profit_capture_exit(price, entry, peak, atr, {**self.baseline, **dict(config)})
 
     def entry_signal(self, features, config: Mapping[str, Any]):
         self.validate_config(config)

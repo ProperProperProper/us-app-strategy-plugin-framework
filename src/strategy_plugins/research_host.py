@@ -49,7 +49,12 @@ class PluginResearchHost:
         if not evidence.get("promotable"):
             raise ValueError(f"candidate is not promotable: {evidence.get('reasons', [])}")
         payload = {
-            "plugin": evidence["plugin"],
+            "plugin": {
+                **evidence["plugin"],
+                "python_root": str(Path(self.plugin.module.__file__).resolve().parents[2]),
+                "entrypoint": "strategy_plugins.us_app_plugin:USAppStrategyPlugin",
+                "constructor": {"lab_root": str(self.plugin.lab_root)},
+            },
             "params": evidence["params"],
             "interval": 10,
             "mode": "SIMULATE",

@@ -19,8 +19,10 @@ must pass parity tests against the Python reference implementation.
 - **Data source:** reproducible candle snapshots or broker feeds.
 - **Execution model:** fees, slippage, and fill assumptions for research.
 
-Provider and data plugins run behind explicit adapters and should execute in
-isolated subprocesses. A plugin must never receive broker credentials or direct
+Provider and data plugins run behind explicit adapters. The current US.APP
+adapter loads the trusted, versioned plugin in the local host process; it does
+not claim operating-system sandboxing. A future code-capable plugin must be
+isolated before it is enabled. No plugin receives broker credentials or direct
 order permissions.
 
 ## Promotion boundary
@@ -33,8 +35,10 @@ A plugin cannot report its own returns or promote itself.
 ## Versioning
 
 Every plugin declares a name, version, kind, API version, supported intervals,
-and capabilities. The host records the manifest beside every evaluation so
-results remain attributable after a plugin changes.
+and capabilities. The registry and promotion artifact record the plugin name,
+version, entrypoint, constructor, parameters, and replay evidence. The current
+US.APP host does not yet persist the complete manifest fields in every replay
+row; the runtime artifact is the authoritative handoff record.
 
 ## Real-data boundary
 

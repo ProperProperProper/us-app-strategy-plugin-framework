@@ -11,7 +11,7 @@ dependencies = ["pydantic>=2.7"]
 
 [project.optional-dependencies]
 runtime = ["numpy>=2.0", "pandas>=2.3", "moomoo==10.12.7208"]
-test = ["pytest>=8"]
+test = ["pytest>=8", "numpy>=2.0", "pandas>=2.3"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -14,5 +14,6 @@ completed candles at or before `t`. Do not use future candles, hidden labels,
 broker state, credentials, or order-submission APIs.
 
 Add deterministic tests for warm-up behavior, duplicate inputs, unsupported
-intervals, and signal output. The trusted host—not the plugin—owns metrics,
-walk-forward replay, promotion, and persistence.
+intervals, and signal output. Register the plugin explicitly; the registry
+does not discover or execute model-generated modules. The trusted host—not the
+plugin—owns metrics, walk-forward replay, promotion, and persistence.

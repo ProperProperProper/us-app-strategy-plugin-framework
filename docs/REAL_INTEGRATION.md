@@ -27,6 +27,11 @@ evaluator through that plugin boundary. It uses the first 21 complete
 sessions for selection and one continuous unseen replay through the latest
 candle. It never creates synthetic candles.
 
+The database path is local state. Use the same database snapshot, lab commit,
+plugin commit, inclusive timestamps, and runtime dependencies when comparing
+results across machines. The adapter does not fetch data unless `--fetch` is
+provided, and it never silently substitutes synthetic data.
+
 `MoomooSimulateExecutor` is the separate paper-order boundary. It confirms the
 selected account is `SIMULATE` before placing any order. It has no live-order
 mode and receives no credentials from the repository.

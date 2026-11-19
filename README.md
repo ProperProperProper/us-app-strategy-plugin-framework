@@ -15,6 +15,7 @@ arbitrary generated code, or report their own performance evidence.
 ```sh
 python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip setuptools
 python -m pip install -e '.[test]'
 pytest -q
 ```
@@ -23,6 +24,9 @@ This repository contains no fake market-data fixtures and no toy strategy.
 Production integration uses real Moomoo OpenD candles, the deterministic
 evaluator, SQLite persistence, and Moomoo `TrdEnv.SIMULATE` paper execution.
 Credentials and account identifiers remain local and are never committed.
+
+The test extra includes the numerical test dependencies. The runtime extra is
+needed only for real Moomoo/OpenD fetching and paper execution.
 
 See [real integration](docs/REAL_INTEGRATION.md) for the actual-data replay
 command and the SIMULATE-only order boundary.

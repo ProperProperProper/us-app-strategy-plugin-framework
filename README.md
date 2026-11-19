@@ -27,9 +27,14 @@ Credentials and account identifiers remain local and are never committed.
 See [real integration](docs/REAL_INTEGRATION.md) for the actual-data replay
 command and the SIMULATE-only order boundary.
 
-The plugin contracts are not themselves a trading bot. The first real adapter
-must connect the contracts to the existing US.APP paper-strategy lab and its
-shared database before any plugin can be evaluated or paper-promoted.
+The repository includes the first real adapter for the US.APP paper-strategy
+lab. It loads real Moomoo candles into SQLite, runs the lab's deterministic
+blind replay, and can write a validated `SIMULATE`-only runtime artifact after
+the promotion gate passes. It does not enable live trading.
+
+The runtime handoff is validated with a typed Pydantic contract. A malformed
+artifact, unsupported interval, non-SIMULATE mode, or malformed plugin
+reference cannot be written by the promotion host.
 
 Python is the native integration language: run an ARM64 Python build with
 native NumPy/Pandas wheels for Moomoo, SQLite, plugins, agents, and supervision.

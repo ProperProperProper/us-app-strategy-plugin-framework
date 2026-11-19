@@ -7,6 +7,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
+from .artifacts import PaperRuntimeArtifact
 from .us_app_evaluator import USAppEvaluator
 from .us_app_plugin import USAppStrategyPlugin
 
@@ -64,6 +65,10 @@ class PluginResearchHost:
                 "replay_protocol": "first_21_complete_sessions_then_one_continuous_unseen_replay",
             },
         }
+        # Validate before touching the existing artifact. This keeps malformed
+        # or unexpectedly extended model output from reaching the paper bot.
+        validated = PaperRuntimeArtifact.model_validate(payload)
+        payload = validated.model_dump(mode="json")
         self.runtime_artifact.parent.mkdir(parents=True, exist_ok=True)
         fd, temporary = tempfile.mkstemp(prefix=self.runtime_artifact.name + ".", dir=self.runtime_artifact.parent)
         try:

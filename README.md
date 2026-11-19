@@ -24,6 +24,9 @@ Production integration uses real Moomoo OpenD candles, the deterministic
 evaluator, SQLite persistence, and Moomoo `TrdEnv.SIMULATE` paper execution.
 Credentials and account identifiers remain local and are never committed.
 
+See [real integration](docs/REAL_INTEGRATION.md) for the actual-data replay
+command and the SIMULATE-only order boundary.
+
 The plugin contracts are not themselves a trading bot. The first real adapter
 must connect the contracts to the existing US.APP paper-strategy lab and its
 shared database before any plugin can be evaluated or paper-promoted.

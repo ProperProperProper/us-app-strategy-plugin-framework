@@ -10,6 +10,7 @@ requires-python = ">=3.9"
 dependencies = []
 
 [project.optional-dependencies]
+runtime = ["numpy>=2.0", "pandas>=2.3", "moomoo==10.12.7208"]
 test = ["pytest>=8"]
 
 [tool.setuptools.packages.find]

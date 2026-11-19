@@ -17,23 +17,28 @@ def main() -> int:
     parser.add_argument("--start", required=True, help="inclusive timestamp")
     parser.add_argument("--end", required=True, help="inclusive timestamp")
     parser.add_argument("--fetch", action="store_true", help="fetch real candles from local Moomoo OpenD")
+    parser.add_argument("--interval", type=int, choices=range(1, 22), default=1,
+                        help="derived replay interval; source is always fetched/stored at 1m")
     parser.add_argument("--candidate-json", type=Path, help="JSON object containing a bounded candidate parameter mutation")
     parser.add_argument("--promote-artifact", type=Path, help="existing paper-bot runtime artifact to update only after the gate passes")
     args = parser.parse_args()
 
     store = CandleStore(args.db)
     if args.fetch:
-        frame = MoomooOpenDSource().fetch_10m(args.symbol, args.start, args.end)
-        store.save(frame, args.symbol, 10)
-    frame = store.load(args.symbol, 10)
-    if frame.empty:
+        frame = MoomooOpenDSource().fetch_1m(args.symbol, args.start, args.end)
+        store.save(frame, args.symbol, 1)
+    source = store.load(args.symbol, 1)
+    if source.empty:
         raise RuntimeError("no real candles available; use --fetch with Moomoo OpenD running")
     plugin = USAppStrategyPlugin(args.lab_root)
+    frame = source if args.interval == 1 else plugin.aggregate_candles(source, args.interval)
+    if frame.empty:
+        raise RuntimeError("no real candles available; use --fetch with Moomoo OpenD running")
     registry = PluginRegistry()
     registry.register(plugin)
     candidate = json.loads(args.candidate_json.read_text()) if args.candidate_json else None
     host = PluginResearchHost(plugin, args.promote_artifact or Path("plugin_runtime.json"))
-    evidence = host.evaluate(frame, candidate)
+    evidence = host.evaluate(frame, candidate, interval=args.interval)
     promoted = None
     if args.promote_artifact:
         if not evidence["promotable"]:

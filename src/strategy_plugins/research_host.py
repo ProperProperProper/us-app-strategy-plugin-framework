@@ -20,7 +20,9 @@ class PluginResearchHost:
         self.evaluator = USAppEvaluator(Path(plugin.module.__file__).resolve().parents[1], plugin)
         self.runtime_artifact = Path(runtime_artifact)
 
-    def evaluate(self, candles, candidate: dict[str, Any] | None = None) -> dict[str, Any]:
+    def evaluate(self, candles, candidate: dict[str, Any] | None = None, interval: int = 1) -> dict[str, Any]:
+        if interval not in self.plugin.manifest.supported_intervals:
+            raise ValueError(f"interval must be one of {self.plugin.manifest.supported_intervals}")
         params = {**self.plugin.baseline, **(candidate or {})}
         self.plugin.validate_config(params)
         baseline = self.evaluator.replay(candles, [self.plugin.baseline])
@@ -39,6 +41,7 @@ class PluginResearchHost:
         return {
             "plugin": {"name": self.plugin.manifest.name, "version": self.plugin.manifest.version},
             "params": params,
+            "interval": interval,
             "baseline": baseline_stats,
             "candidate": candidate_stats,
             "replay": result,
@@ -57,7 +60,7 @@ class PluginResearchHost:
                 "constructor": {"lab_root": str(self.plugin.lab_root)},
             },
             "params": evidence["params"],
-            "interval": 10,
+            "interval": int(evidence.get("interval", 1)),
             "mode": "SIMULATE",
             "promotion": {
                 "baseline": evidence["baseline"],

@@ -14,7 +14,7 @@ def valid_artifact():
             "constructor": {"lab_root": "/tmp/lab"},
         },
         "params": {"fast": 8, "slow": 21},
-        "interval": 10,
+        "interval": 12,
         "mode": "SIMULATE",
         "promotion": {
             "baseline": {"total_return_pct": 1.0},
@@ -27,12 +27,12 @@ def valid_artifact():
 def test_runtime_artifact_contract_accepts_paper_handoff():
     artifact = PaperRuntimeArtifact.model_validate(valid_artifact())
     assert artifact.mode == "SIMULATE"
-    assert artifact.interval == 10
+    assert artifact.interval == 12
 
 
 @pytest.mark.parametrize(
     ("field", "value"),
-    [("mode", "LIVE"), ("interval", 20), ("promotion", {"bad": True})],
+    [("mode", "LIVE"), ("interval", 22), ("promotion", {"bad": True})],
 )
 def test_runtime_artifact_contract_rejects_unsafe_or_malformed_handoff(field, value):
     payload = valid_artifact()

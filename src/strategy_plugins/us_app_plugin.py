@@ -13,7 +13,7 @@ class USAppStrategyPlugin:
     manifest = PluginManifest(
         name="us-app-donchian-ema", version="lab-source", kind="strategy",
         capabilities=("causal_features", "entry_signal", "exit_signal", "blind_replay"),
-        supported_intervals=(10, 20, 30, 40, 50, 60, 70), trusted=True,
+        supported_intervals=tuple(range(1, 22)), trusted=True,
     )
 
     def __init__(self, lab_root: str | Path):

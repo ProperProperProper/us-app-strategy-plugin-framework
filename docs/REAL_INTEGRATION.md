@@ -21,8 +21,9 @@ python3 scripts/real_us_app_replay.py \
   --fetch
 ```
 
-The command fetches real 10-minute candles, validates and stores them in
-SQLite, registers the real US.APP strategy plugin, then calls the existing
+The command fetches real one-minute candles, validates and stores the immutable
+source series in SQLite, derives the selected interval (1 through 21 minutes),
+registers the real US.APP strategy plugin, then calls the existing
 evaluator through that plugin boundary. It uses the first 21 complete
 sessions for selection and one continuous unseen replay through the latest
 candle. It never creates synthetic candles.
@@ -31,6 +32,10 @@ The database path is local state. Use the same database snapshot, lab commit,
 plugin commit, inclusive timestamps, and runtime dependencies when comparing
 results across machines. The adapter does not fetch data unless `--fetch` is
 provided, and it never silently substitutes synthetic data.
+
+Use `--interval 1` through `--interval 21` to compare derived intervals. The
+broker request is always one-minute; higher intervals are deterministic local
+aggregations of the stored one-minute source.
 
 `MoomooSimulateExecutor` is the separate paper-order boundary. It confirms the
 selected account is `SIMULATE` before placing any order. It has no live-order

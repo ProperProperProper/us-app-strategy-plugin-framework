@@ -33,7 +33,7 @@ class PaperRuntimeArtifact(BaseModel):
 
     plugin: PluginReference
     params: dict[str, Any]
-    interval: Literal[10]
+    interval: int = Field(ge=1, le=21)
     mode: Literal["SIMULATE"]
     promotion: PromotionEvidence
 

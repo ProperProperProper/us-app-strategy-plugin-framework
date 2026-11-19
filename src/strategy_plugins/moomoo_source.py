@@ -1,4 +1,4 @@
-"""Real Moomoo OpenD 10-minute candle source; no synthetic fallback."""
+"""Real Moomoo OpenD one-minute source; no synthetic fallback."""
 from __future__ import annotations
 
 import pandas as pd
@@ -9,7 +9,7 @@ class MoomooOpenDSource:
         self.host = host
         self.port = int(port)
 
-    def fetch_10m(self, symbol: str, start: str, end: str) -> pd.DataFrame:
+    def fetch_1m(self, symbol: str, start: str, end: str) -> pd.DataFrame:
         try:
             from moomoo import AuType, KLType, KL_FIELD, OpenQuoteContext, RET_OK
         except ImportError as exc:
@@ -19,7 +19,7 @@ class MoomooOpenDSource:
         try:
             while True:
                 ret, data, page_key = quote.request_history_kline(
-                    code=symbol, start=start, end=end, ktype=KLType.K_10M,
+                    code=symbol, start=start, end=end, ktype=KLType.K_1M,
                     autype=AuType.QFQ, fields=[KL_FIELD.ALL], max_count=1000,
                     page_req_key=page_key, extended_time=False,
                 )

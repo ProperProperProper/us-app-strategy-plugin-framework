@@ -7,7 +7,8 @@ from typing import Any
 
 import pandas as pd
 
-RESEARCH_INTERVALS = (10, 20, 30, 40, 50, 60, 70)
+# Interval 1 is the immutable broker-source series; 2..21 are local derived bars.
+RESEARCH_INTERVALS = tuple(range(1, 22))
 MIN_CANDLE_DATE = pd.Timestamp("2026-01-01")
 
 
@@ -31,7 +32,7 @@ class CandleStore:
         db.commit()
         return db
 
-    def save(self, frame: pd.DataFrame, symbol: str, interval: int = 10, source: str = "moomoo_opend") -> int:
+    def save(self, frame: pd.DataFrame, symbol: str, interval: int = 1, source: str = "moomoo_opend") -> int:
         if interval not in RESEARCH_INTERVALS:
             raise ValueError(f"interval must be one of {RESEARCH_INTERVALS}")
         required = {"open", "high", "low", "close"}
@@ -51,13 +52,13 @@ class CandleStore:
                 raise ValueError(f"malformed OHLCV candle at {stamp}")
             rows.append((symbol, interval, stamp.isoformat(), open_, high, low, close, volume, row.get("turnover"), source))
         with self.connect() as db:
-            db.executemany("""INSERT OR REPLACE INTO candles
+            db.executemany("""INSERT OR IGNORE INTO candles
                 (symbol, interval_minutes, time_key, open, high, low, close, volume, turnover, source)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", rows)
             db.commit()
         return len(rows)
 
-    def load(self, symbol: str, interval: int = 10) -> pd.DataFrame:
+    def load(self, symbol: str, interval: int = 1) -> pd.DataFrame:
         if interval not in RESEARCH_INTERVALS:
             raise ValueError(f"interval must be one of {RESEARCH_INTERVALS}")
         with self.connect() as db:

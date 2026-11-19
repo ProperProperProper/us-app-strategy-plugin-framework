@@ -12,7 +12,8 @@ class PluginManifest:
     kind: str
     api_version: str = "1"
     capabilities: tuple[str, ...] = ()
-    supported_intervals: tuple[int, ...] = (10,)
+    # One-minute broker source with deterministic local aggregations through 21m.
+    supported_intervals: tuple[int, ...] = tuple(range(1, 22))
     trusted: bool = False
 
 

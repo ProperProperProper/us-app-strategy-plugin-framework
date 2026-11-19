@@ -2,6 +2,16 @@
 from __future__ import annotations
 
 
+def _is_simulate_account(accounts, acc_id: int) -> bool:
+    """Require Moomoo's explicit trading-environment field to be SIMULATE."""
+    if accounts is None or "acc_id" not in accounts.columns or "trd_env" not in accounts.columns:
+        return False
+    rows = accounts[accounts["acc_id"].astype(str) == str(int(acc_id))]
+    if rows.empty:
+        return False
+    return str(rows.iloc[0]["trd_env"]).upper() == "SIMULATE"
+
+
 class MoomooSimulateExecutor:
     def __init__(self, acc_id: int, host: str = "127.0.0.1", port: int = 11111):
         self.acc_id = int(acc_id)
@@ -20,8 +30,7 @@ class MoomooSimulateExecutor:
         ret, accounts = self._trade.get_acc_list()
         if ret != RET_OK:
             raise RuntimeError(f"could not inspect Moomoo accounts: {accounts}")
-        rows = accounts[accounts["acc_id"].astype(int) == self.acc_id]
-        if rows.empty or not rows.iloc[0].astype(str).str.contains("SIMULATE", case=False).any():
+        if not _is_simulate_account(accounts, self.acc_id):
             self.close()
             raise RuntimeError("refusing executor: selected account is not confirmed SIMULATE")
 
